@@ -1,0 +1,30 @@
+[
+    {
+        "character": "yanami_anna",
+        "series": "make_heroine_ga_oo_sugiru!",
+        "dataset": "D:\\AIstuff\\lora_dataprep\\yanami_anna_dataset",
+        "img_count": 475,
+        "character_tag": "1girl, yanami anna, make heroine ga oo sugiru!"
+    },
+    {
+        "character": "kana_(bunny_garden)",
+        "series": "bunny_garden",
+        "dataset": "D:\\AIstuff\\lora_dataprep\\kana_(bunny_garden)_dataset",
+        "img_count": 98,
+        "character_tag": "1girl, kana (bunny garden), bunny garden"
+    },
+    {
+        "character": "andrea_doria_(azur_lane)",
+        "series": "azur_lane",
+        "dataset": "D:\\AIstuff\\lora_dataprep\\andrea_doria_(azur_lane)_dataset",
+        "img_count": 80,
+        "character_tag": "1girl, andrea doria (azur lane), azur lane"
+    },
+    {
+        "character": "ogiwara_sayu",
+        "series": "higehiro",
+        "dataset": "D:\\AIstuff\\lora_dataprep\\ogiwara_sayu_dataset",
+        "img_count": 250,
+        "character_tag": "1girl, ogiwara sayu, higehiro"
+    }
+]
