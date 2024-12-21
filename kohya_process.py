@@ -32,12 +32,16 @@ def execute_training(character: str, series: str, img_count: int, dataset_folder
     if img_count > 300:
         # calculate epoch so that (epoch * img_count // 2) is less than soft_step_limit
         epoch = max((soft_step_limit * 2) // img_count, 1)
-    elif img_count > 200:
+    elif img_count > 200:   #1200
         epoch = 6
-    elif img_count > 100:
+    elif img_count > 100:   #900
         epoch = 9
-    else:
+    elif img_count > 60:    #720
         epoch = 12
+    elif img_count > 40:    #600
+        epoch = 14
+    else:
+        epoch = 15
 
     epoch_save = 1
     if epoch >= 10: epoch_save = 2 

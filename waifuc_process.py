@@ -1,6 +1,6 @@
 from waifuc.action import NoMonochromeAction, FilterSimilarAction, \
     TaggingAction, PaddingAlignAction, PersonSplitAction, FaceCountAction, FirstNSelectAction, \
-    CCIPAction, ModeConvertAction, ClassFilterAction, RandomFilenameAction, AlignMinSizeAction, MirrorAction, RatingFilterAction, ThreeStageSplitAction, HeadCountAction, TagFilterAction
+    CCIPAction, ModeConvertAction, ClassFilterAction, RandomFilenameAction, AlignMinSizeAction, MirrorAction, RatingFilterAction, ThreeStageSplitAction, HeadCountAction, TagFilterAction, SafetyAction
 from waifuc.export import TextualInversionExporter, SaveExporter
 from waifuc.source import DanbooruSource, LocalSource, YandeSource, GelbooruSource, PixivSearchSource
 import os
@@ -16,10 +16,11 @@ def local_process(input_path, output_path, useCCIP=True):
         ModeConvertAction('RGB', 'white'),
         # pre-filtering for images
         NoMonochromeAction(),  # no monochrome, greyscale or sketch
-        ClassFilterAction(['illustration', 'bangumi']),  # no comic or 3d
+        ClassFilterAction(['illustration', 'bangumi', '3d']),  # no comic or 3d
         
         # RatingFilterAction(['safe', 'r15']),  # filter images with rating, like safe, r15, r18
         FilterSimilarAction('all'),  # filter duplicated images
+        SafetyAction(),
 
         # human processing
         # FaceCountAction(1),  # drop images with 0 or >1 faces
@@ -87,16 +88,19 @@ def remote_crawl(tags, output_path, src='danbooru', pixiv_search_term=""):
         source = PixivSearchSource(
             pixiv_search_term,
             refresh_token=os.environ.get('PIXIV_REFRESH_TOKEN'),
+            no_ai=False,
         )
     
     source.attach(
         # only 1 head,
         # HeadCountAction(1),
         TagFilterAction([tags[0] + "_(cosplay)"], reversed=True),
-    )[:1000].export(
+    )[:300].export(
         # save images (with meta information from danbooru site)
-        SaveExporter(output_path)
+        SaveExporter(output_path, ignore_error_when_export=True)
     )
 
 if __name__ == '__main__':
-    print('a')
+    print('Testing waifuc_process.py')
+    #remote_crawl('alina_clover', 'data/alina_clover', src='pixiv', pixiv_search_term="アリナ・クローバー")
+    local_process('data/amami_yuu', 'amami_yuu_dataset', useCCIP=False)

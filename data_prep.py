@@ -91,10 +91,12 @@ def assign_extra_tags(meta_folder_path, folder_path, beginning_tag):
                 combined_tags = combined_tags + ((', artist: ' + ', '.join(artist_tag)) if len(artist_tag) > 0 else '')  + combined_meta_tags
 
             # search for file sharing the same id in folder path as the meta file
-            id = "danbooru_" + filename.split('_')[1]
-            gel = "gelbooru_" + filename.split('_')[1]
-            yan = "yande_" + filename.split('_')[1]
-            pix = "pixiv_" + filename.split('_')[1]
+            file_comp = filename.split('_')
+            # file_comp len should be 3 minimum
+            id = "danbooru_" + '_'.join(file_comp[1:(max(len(file_comp) - 1, 2))])
+            gel = "gelbooru_" + '_'.join(file_comp[1:(max(len(file_comp) - 1, 2))])
+            yan = "yande_" + '_'.join(file_comp[1:(max(len(file_comp) - 1, 2))])
+            pix = "pixiv_" + '_'.join(file_comp[1:(max(len(file_comp) - 1, 2))])
             for file in os.listdir(folder_path):
                 if (id == file.split('.')[0]) and file.endswith(".txt"):
                     # original file, use original tagging if applicable
@@ -455,26 +457,30 @@ def process_simple(character, series, skip_download=True, random_remove=0.0, rec
         "character_tag": character_tag,
     }]
 
-def process_batch_waifuc(characters, series_arr, skip_downloads=[], download_src='danbooru', pixiv_search_term = '', use_original = False, skip_waifucs=[], aliases=[]):
+def process_batch_waifuc(characters, series_arr, skip_downloads=[], download_src='danbooru', pixiv_search_terms = dict(), use_original = False, skip_waifucs=[], aliases=dict()):
     for character in characters:
         print(f"Crawling {character}")
         # series = series_arr[characters.index(character)]
         skip_download = skip_downloads[characters.index(character)]
         skip_waifuc = skip_waifucs[characters.index(character)]
-        alias = aliases[characters.index(character)]
-
-        if skip_waifuc:
-            continue
+        alias = aliases[character] if character in aliases else None
+        pixiv_search_term = pixiv_search_terms[character] if character in pixiv_search_terms else None
 
         folder_path="{char}_dataset".format(char=character)
         meta_folder_path="data/{char}".format(char=character)
 
         if not skip_download:
             questionary.print("Crawling images", style="bold fg:green")
-            if alias:
-                remote_crawl([alias], meta_folder_path, src=download_src, pixiv_search_term=pixiv_search_term)
-            remote_crawl([character], meta_folder_path, src=download_src, pixiv_search_term=pixiv_search_term)
-            remote_crawl([character, 'solo'], meta_folder_path)
+            if download_src == 'pixiv' and pixiv_search_term:
+                remote_crawl([character], meta_folder_path, src=download_src, pixiv_search_term=pixiv_search_term)
+            else:
+                if alias:
+                    remote_crawl([alias], meta_folder_path)
+                remote_crawl([character, 'order:score'], meta_folder_path)
+                remote_crawl([character, 'solo'], meta_folder_path)
+
+        if skip_waifuc:
+            continue
 
         # if number of image is too low, do not use CCIP
         should_use_ccip = not (len(os.listdir(meta_folder_path)) < 100)
